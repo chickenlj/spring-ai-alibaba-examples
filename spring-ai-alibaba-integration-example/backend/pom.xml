@@ -22,6 +22,9 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<node.version>v18.16.0</node.version>
+		<npm.version>9.5.1</npm.version>
 	</properties>
 
 	<dependencies>
@@ -105,7 +108,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>app.jar</finalName>
+		<finalName>app</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -123,6 +126,88 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>${maven-deploy-plugin.version}</version>
+			</plugin>
+
+			<!-- 插件用于处理前端构建 -->
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.11.0</version>
+				<executions>
+					<!-- 安装 Node 和 pnpm -->
+					<execution>
+						<id>install node and pnpm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>${node.version}</nodeVersion> <!-- 选择你需要的 Node 版本 -->
+							<npmVersion>${npm.version}</npmVersion> <!-- 需要安装 npm 以便安装 pnpm -->
+							<workingDirectory>ui</workingDirectory>
+						</configuration>
+					</execution>
+
+					<!-- 安装 pnpm -->
+					<execution>
+						<id>install pnpm</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install -g pnpm</arguments>
+							<workingDirectory>ui</workingDirectory>
+						</configuration>
+					</execution>
+
+					<!-- 运行 pnpm install -->
+					<execution>
+						<id>pnpm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>exec -- pnpm install</arguments>
+							<workingDirectory>ui</workingDirectory>
+						</configuration>
+					</execution>
+
+					<!-- 运行 pnpm build -->
+					<execution>
+						<id>pnpm build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>generate-resources</phase> <!-- 确保在资源生成阶段执行 -->
+						<configuration>
+							<arguments>exec -- pnpm build</arguments>
+							<workingDirectory>ui</workingDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- 插件用于将前端构建结果复制到 Spring Boot 静态资源目录 -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>copy-react-build</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+							<resources>
+								<resource>
+									<directory>ui/dist</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

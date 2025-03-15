@@ -2,7 +2,7 @@ services:
 
   backend:
     container_name: spring-ai-alibaba-playground
-    image: spring-ai-alibaba-playground:567411f
+    image: spring-ai-playground:latest
     environment:
       - AI_DASHSCOPE_API_KEY=${AI_DASHSCOPE_API_KEY}
       - WEB_SEARCH_API_KEY=${WEB_SEARCH_API_KEY}

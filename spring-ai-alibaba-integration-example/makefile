@@ -2,7 +2,7 @@ JAVA_PROJECT_DIR=./backend
 VITE_PROJECT_DIR=./frontend
 IMAGE_NAME=spring-ai-alibaba-playground
 DOCKERFILE_PATH=./docker/app/Dockerfile
-TAG=$(shell git rev-parse --short HEAD)
+TAG=latest
 
 .DEFAULT_GOAL := all
 
