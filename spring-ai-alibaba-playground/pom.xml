@@ -103,6 +103,12 @@
 			<version>${spring-ai-alibaba.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.alibaba.cloud.ai</groupId>
+			<artifactId>spring-ai-alibaba-starter-analyticdb-store</artifactId>
+			<version>${spring-ai-alibaba.version}</version>
+		</dependency>
+
 		<!-- Swagger API Docs -->
 		<dependency>
 			<groupId>com.github.xiaoymin</groupId>
