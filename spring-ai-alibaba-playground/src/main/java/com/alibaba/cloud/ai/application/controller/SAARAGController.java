@@ -18,14 +18,15 @@
 package com.alibaba.cloud.ai.application.controller;
 
 import com.alibaba.cloud.ai.application.annotation.UserIp;
-import com.alibaba.cloud.ai.application.entity.result.Result;
-import com.alibaba.cloud.ai.application.entity.tools.ToolCallResp;
-import com.alibaba.cloud.ai.application.service.SAAToolsService;
+import com.alibaba.cloud.ai.application.service.SAARAGService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import reactor.core.publisher.Flux;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,30 +37,27 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@Tag(name = "Tool Calling APIs")
+@Tag(name = "RAG APIs")
 @RequestMapping("/api/v1")
-public class SAAToolsController {
+public class SAARAGController {
 
-	private final SAAToolsService functionService;
+	private final SAARAGService ragService;
 
-	public SAAToolsController(SAAToolsService functionService) {
-		this.functionService = functionService;
-    }
+	public SAARAGController(SAARAGService ragService) {
+		this.ragService = ragService;
+	}
 
-	/**
-	 * http://127.0.0.1:8080/api/v1/tool-call?prompt="使用百度翻译将隐私计算翻译为英文"
-	 *
-	 * 触发百度翻译：使用百度翻译将隐私计算翻译为英文
-	 * 触发百度地图：使用百度地图查找杭州市的银行 ATM 机信息 or 使用百度地图查找杭州的信息
-	 */
 	@UserIp
-	@GetMapping("/tool-call")
-	@Operation(summary = "DashScope ToolCall Chat")
-	public Result<ToolCallResp> chat(
-			@Validated @RequestParam("prompt") String prompt
+	@GetMapping("/rag")
+	@Operation(summary = "DashScope RAG")
+	public Flux<String> ragChat(
+			HttpServletResponse response,
+			@Validated @RequestParam("prompt") String prompt,
+			@RequestHeader(value = "chatId", required = false, defaultValue = "spring-ai-alibaba-playground-rag") String chatId
 	) {
 
-		return Result.success(functionService.chat(prompt));
+		response.setCharacterEncoding("UTF-8");
+		return ragService.ragChat(chatId, prompt);
 	}
 
 }
