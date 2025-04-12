@@ -58,7 +58,6 @@ public class Application  {
 	 */
 	@Bean
 	public VectorStore vectorStore(EmbeddingModel embeddingModel) {
-
 		return SimpleVectorStore.builder(embeddingModel).build();
 	}
 
