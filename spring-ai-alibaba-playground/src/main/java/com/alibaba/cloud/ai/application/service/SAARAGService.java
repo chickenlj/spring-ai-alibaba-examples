@@ -77,7 +77,8 @@ public class SAARAGService {
 						new QuestionAnswerAdvisor(
 								vectorStoreDelegate.getVectorStore(vectorStoreType),
 								SearchRequest.builder()
-										.similarityThreshold(0.08d)
+										// TODO all documents retrieved from ADB are under 0.1
+//										.similarityThreshold(0.6d)
 										.topK(6)
 										.build()
 						)

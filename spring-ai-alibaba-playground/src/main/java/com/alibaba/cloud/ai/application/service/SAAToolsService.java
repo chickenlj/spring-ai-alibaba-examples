@@ -70,8 +70,8 @@ public class SAAToolsService {
 
 		this.chatClient = ChatClient.builder(chatModel)
 				.defaultAdvisors(
-						simpleLoggerAdvisor,
-						messageChatMemoryAdvisor
+						simpleLoggerAdvisor
+//						messageChatMemoryAdvisor
 				).build();
 	}
 
@@ -123,9 +123,11 @@ public class SAAToolsService {
 
 			String llmCallResponse = "";
 			if (Objects.nonNull(toolExecutionResult)) {
-				ToolResponseMessage toolResponseMessage = (ToolResponseMessage) toolExecutionResult.conversationHistory()
-						.get(toolExecutionResult.conversationHistory().size() - 1);
-				llmCallResponse = toolResponseMessage.getResponses().get(0).responseData();
+//				ToolResponseMessage toolResponseMessage = (ToolResponseMessage) toolExecutionResult.conversationHistory()
+//						.get(toolExecutionResult.conversationHistory().size() - 1);
+//				llmCallResponse = toolResponseMessage.getResponses().get(0).responseData();
+				ChatResponse finalResponse = chatClient.prompt().messages(toolExecutionResult.conversationHistory()).call().chatResponse();
+				llmCallResponse = finalResponse.getResult().getOutput().getText();
 			}
 
 			tcr.setStatus(ToolCallResp.ToolState.SUCCESS);
