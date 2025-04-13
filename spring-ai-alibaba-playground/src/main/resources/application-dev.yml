@@ -21,8 +21,8 @@ spring:
       analytic:
         dbInstanceId: gp-bp1238pvyz0g78u2m
         regionId: cn-hangzhou
-        managerAccount: saa2025
-        managerAccountPassword: saa@2025
+        managerAccount: ${ADB_MANAGER_ACCOUNT}
+        managerAccountPassword: ${ADB_MANAGER_ACCOUNT_PASSWORD}
         namespace: saa
         namespacePassword: saa@2025
         collectName: saa
