@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.alibaba.cloud.ai.application.config;
+package com.alibaba.cloud.ai.application.config.rag;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,37 +26,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.alibaba.cloud.ai.vectorstore.opensearch.OpenSearchVectorStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.markdown.MarkdownDocumentReader;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.ai.vectorstore.VectorStore;
 
 /**
  * @author yuluo
  * @author <a href="mailto:yuluo08290126@gmail.com">yuluo</a>
  */
+public class VectorStoreInitializer {
 
-@Component
-public class LocalRAGVectorStoreInit implements ApplicationRunner {
+	private final Logger logger = LoggerFactory.getLogger(VectorStoreInitializer.class);
 
-	private final Logger logger = LoggerFactory.getLogger(LocalRAGVectorStoreInit.class);
-
-	private final OpenSearchVectorStore vectorStore;
-
-	private final List<MarkdownDocumentReader> markdownDocumentReaderList;
-
-	public LocalRAGVectorStoreInit(OpenSearchVectorStore vectorStore) throws IOException {
-
-		this.vectorStore = vectorStore;
-		this.markdownDocumentReaderList = loadMarkdownDocuments();
-	}
-
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
+	public void init(VectorStore vectorStore) throws Exception {
+		List<MarkdownDocumentReader> markdownDocumentReaderList = loadMarkdownDocuments();
 
 		int size = 0;
 		if (markdownDocumentReaderList.isEmpty()) {
@@ -66,14 +53,20 @@ public class LocalRAGVectorStoreInit implements ApplicationRunner {
 
 		logger.debug("Start to load markdown documents into vector store......");
 		for (MarkdownDocumentReader markdownDocumentReader : markdownDocumentReaderList) {
-			vectorStore.add(markdownDocumentReader.get());
-			size += markdownDocumentReader.get().size();
+			List<Document> documents = new TokenTextSplitter(2000, 1024, 10, 10000, true).transform(markdownDocumentReader.get());
+			size += documents.size();
+
+			// 拆分 documents 列表为最大 25 个元素的子列表
+			for (int i = 0; i < documents.size(); i += 25) {
+				int end = Math.min(i + 25, documents.size());
+				List<Document> subList = documents.subList(i, end);
+				vectorStore.add(subList);
+			}
 		}
 		logger.debug("Load markdown documents into vector store successfully. Load {} documents.", size);
 	}
 
 	private List<MarkdownDocumentReader> loadMarkdownDocuments() throws IOException {
-
 		List<MarkdownDocumentReader> readers = new ArrayList<>();
 		Path markdownDir = Paths.get(getClass().getClassLoader().getResource("rag/markdown").getPath());
 
@@ -81,7 +74,11 @@ public class LocalRAGVectorStoreInit implements ApplicationRunner {
 
 			readers = paths.filter(Files::isRegularFile)
 					.filter(path -> path.toString().endsWith(".md"))
-					.map(path -> new MarkdownDocumentReader(path.toFile().getName()))
+					.map(path -> {
+						String fileName = path.getFileName().toString();
+						String classpathPath = "classpath:rag/markdown/" + fileName;
+						return new MarkdownDocumentReader(classpathPath);
+					})
 					.collect(Collectors.toList());
 		}
 

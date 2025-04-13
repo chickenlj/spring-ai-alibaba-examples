@@ -19,13 +19,15 @@ spring:
   ai:
     vectorstore:
       analytic:
-        dbInstanceId: gp-bp1138thjz30mw4i3
+        dbInstanceId: gp-bp1238pvyz0g78u2m
         regionId: cn-hangzhou
         managerAccount: saa2025
         managerAccountPassword: saa@2025
-        namespace: saaNs
-        namespacePassword: saaNs@2025
+        namespace: saa
+        namespacePassword: saa@2025
         collectName: saa
+        access-key-id: ${ADB_ACCESS_KEY_ID}
+        access-key-secret: ${ADB_ACCESS_KEY_SECRET}
     dashscope:
       api-key: ${AI_DASHSCOPE_API_KEY}
     # 使用自定义增强的 mcp server config 替换
@@ -54,13 +56,13 @@ spring:
           model: qwen-max
 
     # 向量数据库配置
-    vectorstore:
-      opensearch:
-        access-pass-word:
-        access-user-name:
-        instance-id:
-        endpoint:
-        enabled: true
+#    vectorstore:
+#      opensearch:
+#        access-pass-word:
+#        access-user-name:
+#        instance-id:
+#        endpoint:
+#        enabled: true
 
     # 注意：观测数据可能存在敏感信息！
     chat:

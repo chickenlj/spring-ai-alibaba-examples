@@ -117,7 +117,7 @@ public class SAAToolsService {
 				tcr.setErrorMessage(e.getMessage());
 				tcr.setToolEndTime(LocalDateTime.now());
 				tcr.setToolCostTime((long) (tcr.getToolEndTime().getNano() - tcr.getToolStartTime().getNano()));
-				logger.debug("Error ToolCallResp: {}, msg: {}", tcr, e.getMessage());
+				logger.error("Error ToolCallResp: {}, msg: {}", tcr, e.getMessage());
 				// throw new RuntimeException("Tool execution failed, please check the logs for details.");
 			}
 

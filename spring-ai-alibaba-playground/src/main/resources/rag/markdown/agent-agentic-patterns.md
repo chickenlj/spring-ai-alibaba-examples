@@ -4,7 +4,7 @@ keywords: [Spring AI,代理模式,智能体架构]
 description: "使用Spring AI构建高效代理"
 ---
 
-# AgentAgenticPatterns 简介
+# Agentic Patterns 简介
 在最近的一篇研究报告[《构建高效代理》](https://www.anthropic.com/research/building-effective-agents) 中，Anthropic分享了关于构建高效大语言模型（LLM）代理的宝贵见解。这项研究特别有趣的地方在于，它强调简单性和可组合性，而非复杂的框架。让我们来探索如何利用Spring AI将这些原则转化为实际的实现。
 
 ## 什么是智能体
