@@ -30,7 +30,7 @@ public class VectorStoreDelegate {
 	}
 
 	public VectorStore getVectorStore(String vectorStoreType) {
-		if (Objects.equals(vectorStoreType, "analyticdb")) {
+		if (Objects.equals(vectorStoreType, "analyticdb") && analyticdbVectorStore != null) {
 			return analyticdbVectorStore;
 		}
 		return simpleVectorStore;

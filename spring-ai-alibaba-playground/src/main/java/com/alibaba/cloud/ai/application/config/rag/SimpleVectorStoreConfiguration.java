@@ -35,6 +35,7 @@ import org.springframework.ai.reader.markdown.MarkdownDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -67,7 +68,7 @@ public class SimpleVectorStoreConfiguration {
 
 	@Bean
 	public VectorStoreDelegate vectorStoreDelegate(@Qualifier("simpleVectorStore") VectorStore simpleVectorStore,
-			@Qualifier("analyticdbVectorStore") VectorStore analyticdbVectorStore) {
+			@Qualifier("analyticdbVectorStore") @Autowired(required = false) VectorStore analyticdbVectorStore) {
 		return new VectorStoreDelegate(simpleVectorStore, analyticdbVectorStore);
 	}
 

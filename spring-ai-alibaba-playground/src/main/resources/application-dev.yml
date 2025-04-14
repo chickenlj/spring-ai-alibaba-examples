@@ -19,6 +19,7 @@ spring:
   ai:
     vectorstore:
       analytic:
+        enabled: false
         dbInstanceId: gp-bp1238pvyz0g78u2m
         regionId: cn-hangzhou
         managerAccount: ${ADB_MANAGER_ACCOUNT}
